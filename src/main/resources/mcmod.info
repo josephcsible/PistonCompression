@@ -1,14 +1,14 @@
 [
 {
-  "modid": "examplemod",
-  "name": "Example Mod",
-  "description": "Example placeholder mod.",
+  "modid": "pistoncompression",
+  "name": "PistonCompression",
+  "description": "Allows pistons to compress blocks into other blocks or items.",
   "version": "${version}",
   "mcversion": "${mcversion}",
-  "url": "",
+  "url": "https://minecraft.curseforge.com/projects/pistoncompression",
   "updateUrl": "",
-  "authorList": ["ExampleDude"],
-  "credits": "The Forge and FML guys, for making this example",
+  "authorList": ["Joseph C. Sible"],
+  "credits": "",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []
