@@ -23,8 +23,11 @@ able to move each other.
 ### What settings does this mod have?
 You can choose exactly what compressions are possible. The first two columns of
 each entry are the old block's name and a state predicate, the same as
-/testforblock uses. The second two columns are the new block's or item's name
-and a data value or block state. The final column is optional. Examples:
+/testforblock uses. The third column is the new block's or item's name, and the
+fourth column is the data value or block state. If the fifth column is present,
+the compression result is forced to drop as an item even if it has a block
+form, and the column's value specifies the quantity. All columns after the
+third are optional. Examples:
 - minecraft:ice * minecraft:packed_ice
 - minecraft:coal_block * minecraft:diamond
 

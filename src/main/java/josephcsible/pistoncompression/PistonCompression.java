@@ -113,11 +113,11 @@ public class PistonCompression
 		// XXX it still appears in the GUI; that needs to be fixed too
 		Property prop = config.get(Configuration.CATEGORY_GENERAL, "replacements", DEFAULT_REPLACEMENTS);
 		prop.setLanguageKey("replacements");
-		prop.setComment("A list of entries in the following format: <block> <dataValue|-1|state|*> <block|item> [data|dataValue|state]");
+		prop.setComment("A list of entries in the following format: <block> <dataValue|-1|state|*> (<block> [dataValue|state]|<item> [data] [quantity])");
 		for(String str : prop.getStringList()) {
 			String[] pieces = str.split(" ");
-			if(pieces.length != 3 && pieces.length != 4) {
-				log.warn("Ignoring replacement with {} terms (expected 3 or 4): {}", pieces.length, str);
+			if(pieces.length < 3 || pieces.length > 5) {
+				log.warn("Ignoring replacement with {} terms (expected 3 to 5): {}", pieces.length, str);
 				continue;
 			}
 
@@ -137,7 +137,7 @@ public class PistonCompression
 			}
 
 			rl = new ResourceLocation(pieces[2]);
-			if (Block.REGISTRY.containsKey(rl)) {
+			if (pieces.length != 5 && Block.REGISTRY.containsKey(rl)) {
 				Block newBlock = Block.REGISTRY.getObject(rl);
 				IBlockState newState;
 				if(pieces.length == 4) {
@@ -159,8 +159,19 @@ public class PistonCompression
 				}
 				replacements.get(oldBlock).add(new Replacement(predicate, newState));
 			} else if(Item.REGISTRY.containsKey(rl)) {
-				int meta;
-				if(pieces.length == 4) {
+				int meta, quantity;
+				if(pieces.length >= 4) {
+					if(pieces.length == 5) {
+						try {
+							quantity = Integer.parseInt(pieces[4]);
+						} catch (NumberFormatException e) {
+							log.warn("Ignoring replacement with invalid item quantity: {}", str);
+							continue;
+						}
+					} else {
+						quantity = 1;
+					}
+
 					try {
 						meta = Integer.parseInt(pieces[3]);
 					} catch (NumberFormatException e) {
@@ -169,12 +180,13 @@ public class PistonCompression
 					}
 				} else {
 					meta = 0;
+					quantity = 1;
 				}
 
 				if(!replacements.containsKey(oldBlock)) {
 					replacements.put(oldBlock, new ArrayList<Replacement>());
 				}
-				replacements.get(oldBlock).add(new Replacement(predicate, new ItemStack(Item.REGISTRY.getObject(rl), 1, meta)));
+				replacements.get(oldBlock).add(new Replacement(predicate, new ItemStack(Item.REGISTRY.getObject(rl), quantity, meta)));
 			} else {
 				log.warn("Ignoring replacement with unknown new block or item: {}", str);
 			}
